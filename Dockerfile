@@ -82,7 +82,7 @@ RUN if [ -f .env.build ]; then \
     fi && \
     if [ -f .env.appinsights ]; then \
       export $(cat .env.appinsights) && echo "App Insights: $VITE_APPINSIGHTS_CONNECTION_STRING" | cut -c1-60; \
-    fi && npm run build
+    fi && NODE_OPTIONS=--max-old-space-size=4096 npm run build
 
 # Build MCP server (TypeScript -> dist/) so it can ship in the runtime image.
 # The MCP server has its own package.json and is independent of the Vite app.
