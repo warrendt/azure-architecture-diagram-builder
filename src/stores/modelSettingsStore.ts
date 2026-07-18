@@ -263,8 +263,11 @@ function loadSettings(): ModelSettings {
       const parsed = JSON.parse(stored);
       // Validate model type
       if (parsed.model && MODEL_CONFIG[parsed.model as ModelType]) {
+        const storedModel = parsed.model as ModelType;
         return {
-          model: parsed.model as ModelType,
+          // If the stored model no longer has a deployment configured (e.g. the
+          // environment only deploys a subset of models), fall back to an available one.
+          model: isModelAvailable(storedModel) ? storedModel : getDefaultModel(),
           reasoningEffort: ['none', 'low', 'medium', 'high'].includes(parsed.reasoningEffort) 
             ? parsed.reasoningEffort 
             : DEFAULT_SETTINGS.reasoningEffort,
@@ -275,7 +278,7 @@ function loadSettings(): ModelSettings {
   } catch (e) {
     console.warn('Failed to load model settings:', e);
   }
-  return DEFAULT_SETTINGS;
+  return { ...DEFAULT_SETTINGS, model: getDefaultModel() };
 }
 
 /**
@@ -403,4 +406,21 @@ export function isModelAvailable(model: ModelType): boolean {
  */
 export function getAvailableModels(): ModelType[] {
   return (Object.keys(MODEL_CONFIG) as ModelType[]).filter(isModelAvailable);
+}
+
+/**
+ * Resolve the effective default model.
+ *
+ * Prefer the built-in default when it has a deployment configured; otherwise fall
+ * back to the first available model so the app stays usable with any subset of
+ * deployed models (e.g. a deployment that only wires up a single model). Falls back
+ * to the built-in default as a last resort when nothing is deployed — the UI then
+ * surfaces the not-configured state via isAzureOpenAIConfigured().
+ */
+export function getDefaultModel(): ModelType {
+  if (isModelAvailable(DEFAULT_SETTINGS.model)) {
+    return DEFAULT_SETTINGS.model;
+  }
+  const [firstAvailable] = getAvailableModels();
+  return firstAvailable ?? DEFAULT_SETTINGS.model;
 }
