@@ -264,6 +264,18 @@ export const AZURE_REGIONS: RegionPricing[] = [
     armRegionName: 'canadaeast',
     multiplier: 1.04
   },
+  {
+    region: 'uaenorth',
+    displayName: 'UAE North',
+    armRegionName: 'uaenorth',
+    multiplier: 1.10
+  },
+  {
+    region: 'southafricanorth',
+    displayName: 'South Africa North',
+    armRegionName: 'southafricanorth',
+    multiplier: 1.18
+  },
 ];
 
 /**

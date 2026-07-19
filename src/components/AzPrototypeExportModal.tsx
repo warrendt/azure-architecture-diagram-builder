@@ -43,6 +43,8 @@ const AZURE_REGIONS = [
   { value: 'canadacentral', label: 'Canada Central' },
   { value: 'brazilsouth', label: 'Brazil South' },
   { value: 'japaneast', label: 'Japan East' },
+  { value: 'uaenorth', label: 'UAE North' },
+  { value: 'southafricanorth', label: 'South Africa North' },
 ];
 
 export default function AzPrototypeExportModal({
